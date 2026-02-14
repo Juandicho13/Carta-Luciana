@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi Hermanita ✨🛼</title>
+    <style>
+        /* --- FUENTES TEMÁTICAS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Rubik+Glitch&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: radial-gradient(circle at center, #2a0a3a 0%, #000000 80%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        /* --- TÍTULO PRINCIPAL --- */
+        h1.main-title { 
+            font-family: 'Rubik Glitch', cursive;
+            color: #ffffff;
+            text-shadow: 0 0 5px #ff00cc, 0 0 15px #ff00cc, 0 0 30px #ff00cc;
+            margin-bottom: 40px; 
+            font-size: 2.5rem; 
+            text-align: center; 
+            z-index: 10;
+            padding: 0 20px;
+            letter-spacing: 3px;
+        }
+
+        /* --- EL SOBRE MISTERIOSO --- */
+        .envelope-wrapper {
+            position: relative; width: 280px; height: 180px; cursor: pointer;
+            transition: transform 0.3s; z-index: 50;
+        }
+        .envelope-wrapper:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(255, 0, 200, 0.8)); }
+
+        .envelope-body {
+            position: absolute; bottom: 0; width: 100%; height: 100%;
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            border: 2px solid #ff00cc;
+            box-shadow: 0 0 20px rgba(255, 0, 200, 0.3);
+            overflow: hidden;
+        }
+
+        .flap { position: absolute; width: 0; height: 0; border-style: solid; }
+        .flap-left { border-width: 90px 0 90px 140px; border-color: transparent transparent transparent #121225; top: 0; left: 0; }
+        .flap-right { border-width: 90px 140px 90px 0; border-color: transparent #121225 transparent transparent; top: 0; right: 0; }
+        .flap-bottom { border-width: 0 140px 100px 140px; border-color: transparent transparent #2a0a3a transparent; bottom: 0; left: 0; z-index: 2; }
+        .flap-top { border-width: 110px 140px 0 140px; border-color: #3a0a4a transparent transparent transparent; top: 0; left: 0; z-index: 3; transform-origin: top; transition: transform 0.6s ease-in-out; }
+
+        .neon-seal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -80%);
+            width: 50px; height: 50px; background: #000; border-radius: 50%; z-index: 4;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px #ff00cc, inset 0 0 10px #00ffff;
+            border: 2px solid #fff;
+            font-size: 28px;
+        }
+
+        /* --- ESTILOS COMPARTIDOS PARA LAS CARTAS --- */
+        .modal-letter {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%; max-width: 500px;
+            max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            background: linear-gradient(to bottom, #fdfbfb, #ebedee);
+            padding: 35px 25px;
+            border-radius: 15px;
+            border: 4px solid transparent;
+            background-clip: padding-box;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-letter.open { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+        .letter-content h2 {
+            font-family: 'Rubik Glitch', cursive; color: #ff0055;
+            text-align: center; margin-bottom: 25px; font-size: 1.8rem;
+            text-shadow: 2px 2px 0px #00ffff;
+            letter-spacing: 1px;
+        }
+
+        .letter-content p {
+            font-family: 'Pacifico', cursive; font-size: 1.5rem;
+            color: #333; line-height: 1.6; margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .signature { text-align: right; font-size: 1.6rem; margin-top: 30px; color: #ff00cc; font-family: 'Pacifico', cursive;}
+
+        /* --- CARTA DE LA HERMANA --- */
+        #sister-letter {
+            z-index: 200;
+            box-shadow: 0 0 30px rgba(255, 0, 200, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .highlight-sl { color: #e91e63; font-weight: bold; text-shadow: 1px 1px 2px rgba(233, 30, 99, 0.3); }
+
+        /* --- CARTA SECRETA DE MAMÁ --- */
+        #mom-letter {
+            z-index: 300;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(255, 0, 200, 0.3);
+        }
+        #mom-letter h2 { color: #00aaaa; text-shadow: 2px 2px 0px #ff00cc; }
+        .muppet-text { color: #e91e63; font-size: 1.8rem; font-weight: bold; display: block; margin-top: 10px; }
+        
+        /* Botón de cerrar de la carta de mamá */
+        .close-btn {
+            position: absolute; top: 15px; right: 20px;
+            font-size: 1.5rem; color: #333; cursor: pointer;
+            font-family: sans-serif; font-weight: bold;
+        }
+
+        /* --- BOTÓN SECRETO FLOTANTE PARA MAMÁ --- */
+        .mom-trigger-btn {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            background: #00aaaa;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px #00ffff;
+            z-index: 400;
+            animation: pulse 2s infinite;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px #00ffff; }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px #00ffff; }
+            100% { transform: scale(1); box-shadow: 0 0 15px #00ffff; }
+        }
+
+        /* --- ANIMACIONES Y FLOTANTES --- */
+        .floater { position: absolute; font-size: 3rem; pointer-events: none; bottom: -80px; animation: floatUp linear forwards; z-index: 100; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7)); }
+        @keyframes floatUp { to { transform: translateY(-120vh) rotate(20deg); } }
+        .vanish { animation: fadeOut 0.5s forwards; }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(1.5) rotate(10deg); filter: blur(10px); } }
+
+    </style>
+</head>
+<body>
+
+    <iframe id="yt-player" width="1" height="1" src="" frameborder="0" allow="autoplay" style="display:none; position:absolute; left:-9999px;"></iframe>
+
+    <h1 class="main-title">¡Un mensaje sobre ruedas! ✨🛼</h1>
+
+    <div class="envelope-wrapper" id="closed-envelope">
+        <div class="envelope-body">
+            <div class="flap flap-left"></div><div class="flap flap-right"></div><div class="flap flap-bottom"></div><div class="flap flap-top" id="top-flap"></div>
+            <div class="neon-seal">🌟</div>
+        </div>
+    </div>
+
+    <div id="sister-letter" class="modal-letter">
+        <div class="letter-content">
+            <h2>¡Hola, Hermanita!</h2>
+            
+            <p>La vida es como una pista de patinaje: a veces te caes, pero lo más importante es levantarse, sacudirse y <span class="highlight-sl">seguir rodando</span> con más fuerza.</p>
+            
+            <p>Nunca dejes de soñar en grande. Ponte tus patines, despliega tus <span class="highlight-sl">"alas"</span> y vuela alto, porque no hay nada inalcanzable cuando crees en ti.</p>
+            
+            <p>Siempre seré tu equipo y tu apoyo en cada nueva coreografía de la vida. ¡Sigue brillando con tu propia luz!</p>
+
+            <div class="signature">Te quiero mucho ❤️🍊</div>
+        </div>
+    </div>
+
+    <div class="mom-trigger-btn" id="btn-mama">💌 Para Mamá</div>
+
+    <div id="mom-letter" class="modal-letter">
+        <div class="close-btn" id="close-mama">❌</div>
+        <div class="letter-content">
+            <h2>¡Sorpresa para Mamá!</h2>
+            
+            <p>Sé que estabas mirando, así que esta es solo para ti:</p>
+
+            <p class="muppet-text">🎶 ¡Mah Nà Mah Nà! 🎶</p>
+            <p>¡Tu turu ru ru!</p>
+            
+            <p class="muppet-text">¡Mah Nà Mah Nà!</p>
+            <p>¡Tu turu ru!</p>
+            
+            <p class="muppet-text">¡Mah Nà Mah Nà!</p>
+            <p>¡Tu turu ru ru, <br> tu turu ru ru, <br> tu turu ru ru, <br> tu turu, ruru ru ru! 🐸</p>
+
+            <div class="signature">Feliz día, Ma ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        const closedEnvelope = document.getElementById('closed-envelope');
+        const sisterLetter = document.getElementById('sister-letter');
+        const mainTitle = document.querySelector('.main-title');
+        
+        // Elementos de la carta de mamá y música
+        const btnMama = document.getElementById('btn-mama');
+        const momLetter = document.getElementById('mom-letter');
+        const closeMama = document.getElementById('close-mama');
+        const ytPlayer = document.getElementById('yt-player'); // El reproductor invisible
+
+        function createFloater() {
+            const floater = document.createElement('div'); floater.classList.add('floater');
+            const emojis = ['🛼', '🎶', '🌙', '🌈', '✨', '💖', '💫']; 
+            floater.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            floater.style.left = Math.random() * 90 + 5 + 'vw'; 
+            floater.style.animationDuration = Math.random() * 4 + 3 + 's';
+            document.body.appendChild(floater);
+            floater.addEventListener('animationend', () => floater.remove());
+        }
+
+        // Abrir la carta principal (Hermana)
+        closedEnvelope.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            
+            closedEnvelope.classList.add('vanish');
+            mainTitle.classList.add('vanish');
+
+            for(let i=0; i<35; i++) setTimeout(createFloater, i * 80);
+
+            setTimeout(() => {
+                sisterLetter.classList.add('open');
+                // Mostrar el botón de mamá un segundo después
+                setTimeout(() => {
+                    btnMama.style.display = 'block';
+                }, 800);
+            }, 500);
+        });
+
+        // Abrir la carta de Mamá y REPRODUCIR MÚSICA
+        btnMama.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            momLetter.classList.add('open');
+            btnMama.style.display = 'none'; // Ocultar el botón
+            
+            // Inyectar el link de YouTube con Autoplay encendido
+            ytPlayer.src = "https://www.youtube.com/embed/zb47CstE7R4?autoplay=1";
+        });
+
+        // Cerrar la carta de Mamá y DETENER MÚSICA
+        closeMama.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            momLetter.classList.remove('open');
+            btnMama.style.display = 'block'; // Volver a mostrar el botón
+            
+            // Borrar el link de YouTube para que la música se detenga
+            ytPlayer.src = "";
+        });
+    </script>
+</body>
+</html>
